@@ -1,3 +1,0 @@
-C:/Users/Andrew/CLionProjects/City-Pathfinding/cmake-build-debug/CMakeFiles/City_Pathfinding.dir
-C:/Users/Andrew/CLionProjects/City-Pathfinding/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/Andrew/CLionProjects/City-Pathfinding/cmake-build-debug/CMakeFiles/rebuild_cache.dir

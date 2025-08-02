@@ -38,9 +38,11 @@ A performance-focused simulation of large-scale city pathfinding using Dijkstra'
 - Extracted using [`osmnx`](https://github.com/gboeing/osmnx)
 - Based on **OpenStreetMap** data
 - Exported to CSV using a custom Python script
-- Stored in `data/city_edges.csv` (columns: `from`, `to`, `cost`, `x1`, `y1`, `x2`, `y2`)
+- Stored in `data/city_edges.csv` with columns: `from`, `to`, `cost`, `x1`, `y1`, `x2`, `y2`
+- Landmark data stored in `data/landmarks.csv` with columns: `name`, `node`, `lat`, `lon`  
+  This was generated from `data/node_locations.csv`, which lists each node with its corresponding latitude and longitude
 
-> Example snippet used to generate the data:
+> Example snippet used to generate the data in `city_edges.csv`:
 > ```python
 > import osmnx as ox
 > import csv

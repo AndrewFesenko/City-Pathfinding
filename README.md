@@ -57,3 +57,7 @@ A performance-focused simulation of large-scale city pathfinding using Dijkstra'
 >         x2, y2 = G.nodes[v]["x"], G.nodes[v]["y"]
 >         writer.writerow([u, v, cost, x1, y1, x2, y2])
 > ```
+
+---
+
+> Some README sections were structured with the help of [readme.so](https://readme.so/)

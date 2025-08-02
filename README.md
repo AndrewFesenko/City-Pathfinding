@@ -34,7 +34,7 @@ A performance-focused simulation of large-scale city pathfinding using Dijkstra'
 
 ## 📊 Dataset
 
-- Based on [SNAP roadNet datasets](https://snap.stanford.edu/data/)
-- Sample nodes/edges stored in `data/nodes.csv` and `data/edges.csv`
-- Edge weights simulate distance and traffic conditions
+- Based on OpenStreetMap Data, leveraging the NetworkX library
+- Edge list of graph data found in data\city_edges.csv
+- Cost of an edge represents distance / time to travel
 - Large-scale testing supported via generated or converted data

@@ -6,7 +6,7 @@ A performance-focused simulation of large-scale city pathfinding using Dijkstra'
 
 ## ⚙️ Core Features
 
-- Graph-based city simulation with up to **100,000 nodes**
+- Graph-based city simulation with over **100,000 real-world intersections**
 - Custom implementations of **Dijkstra** and **A\*** in C++
 - Support for **traffic multipliers** and **road closures**
 - Coordinate-aware **heuristics for A\*** performance
@@ -34,7 +34,30 @@ A performance-focused simulation of large-scale city pathfinding using Dijkstra'
 
 ## 📊 Dataset
 
-- Based on [SNAP roadNet datasets](https://snap.stanford.edu/data/)
-- Sample nodes/edges stored in `data/nodes.csv` and `data/edges.csv`
-- Edge weights simulate distance and traffic conditions
-- Large-scale testing supported via generated or converted data
+- Road network data for **Los Angeles, California**
+- Extracted using [`osmnx`](https://github.com/gboeing/osmnx)
+- Based on **OpenStreetMap** data
+- Exported to CSV using a custom Python script
+- Stored in `data/city_edges.csv` (columns: `from`, `to`, `cost`, `x1`, `y1`, `x2`, `y2`)
+
+> Example snippet used to generate the data:
+> ```python
+> import osmnx as ox
+> import csv
+> 
+> place_name = "Los Angeles, California, USA"
+> G = ox.graph_from_place(place_name, network_type="drive")
+> 
+> with open("data/edges.csv", "w", newline="") as f:
+>     writer = csv.writer(f)
+>     writer.writerow(["from", "to", "cost", "x1", "y1", "x2", "y2"])
+>     for u, v, data in G.edges(data=True):
+>         cost = data.get("length", 1.0)
+>         x1, y1 = G.nodes[u]["x"], G.nodes[u]["y"]
+>         x2, y2 = G.nodes[v]["x"], G.nodes[v]["y"]
+>         writer.writerow([u, v, cost, x1, y1, x2, y2])
+> ```
+
+---
+
+> Some README sections were structured with the help of [readme.so](https://readme.so/)

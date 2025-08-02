@@ -39,7 +39,7 @@ public:
 
     bool nodeFound(long long id) {
         auto it = nodes.find(id);
-        if(it == scores.end()) return false;
+        if(it == nodes.end()) return false;
         return true;
     }
 };

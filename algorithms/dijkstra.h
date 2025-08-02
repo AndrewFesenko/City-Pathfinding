@@ -12,16 +12,16 @@
 
 using namespace std;
 
-vector<int> dijkstra(Graph& graph, int start, int end) {
-    unordered_map<int, double> dist; //shortest known distance
-    unordered_map<int, int> prev; // previous node on the shortest path
-    set<int> visited;
+vector<long long> dijkstra(Graph& graph, long long start, long long end) {
+    unordered_map<long long, double> dist; //shortest known distance
+    unordered_map<long long, long long> prev; // previous node on the shortest path
+    set<long long> visited;
 
     for (const auto& [id, _] : graph.nodes)
         dist[id] = numeric_limits<double>::infinity();
     dist[start] = 0;
 
-    using PDI = pair<double, int>; // priority queue for nodes to explore, ordered by distance
+    using PDI = pair<double, long long>; // priority queue for nodes to explore, ordered by distance
     priority_queue<PDI, vector<PDI>, greater<>> pq;
     pq.push({0, start});
 
@@ -42,10 +42,10 @@ vector<int> dijkstra(Graph& graph, int start, int end) {
         }
     }
 
-    vector<int> path;
+    vector<long long> path;
     if (dist[end] == numeric_limits<double>::infinity()) return path;
 
-    for (int at = end; at != start; at = prev[at])
+    for (long long at = end; at != start; at = prev[at])
         path.push_back(at);
     path.push_back(start);
     reverse(path.begin(), path.end());

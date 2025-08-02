@@ -17,10 +17,10 @@ double heuristic(const Node& a, const Node& b) {
     return sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
 }
 
-vector<int> astar(Graph& graph, int start, int end) { // a* algorithm
-    unordered_map<int, double> gScore, fScore;
-    unordered_map<int, int> prev;
-    set<int> visited;
+vector<long long> astar(Graph& graph, long long start, long long end) { // a* algorithm
+    unordered_map<long long, double> gScore, fScore;
+    unordered_map<long long, long long> prev;
+    set<long long> visited;
 
     for (const auto& [id, _] : graph.nodes) { //gscore and f score
         gScore[id] = numeric_limits<double>::infinity();
@@ -29,7 +29,7 @@ vector<int> astar(Graph& graph, int start, int end) { // a* algorithm
     gScore[start] = 0;
     fScore[start] = heuristic(graph.nodes[start], graph.nodes[end]);
 
-    using PDI = pair<double, int>;
+    using PDI = pair<double, long long>;
     priority_queue<PDI, vector<PDI>, greater<>> openSet;
     openSet.push({fScore[start], start});
 
@@ -53,10 +53,10 @@ vector<int> astar(Graph& graph, int start, int end) { // a* algorithm
         }
     }
 
-    vector<int> path;
+    vector<long long> path;
     if (gScore[end] == numeric_limits<double>::infinity()) return path;
 
-    for (int at = end; at != start; at = prev[at])
+    for (long long at = end; at != start; at = prev[at])
         path.push_back(at);
     path.push_back(start);
     reverse(path.begin(), path.end());

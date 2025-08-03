@@ -13,6 +13,9 @@
 using namespace std;
 
 vector<int> dijkstra(Graph& graph, int start, int end) {
+    if (graph.nodes.find(start) == graph.nodes.end()){
+        return {};
+    }
     unordered_map<int, double> dist; //shortest known distance
     unordered_map<int, int> prev; // previous node on the shortest path
     set<int> visited;

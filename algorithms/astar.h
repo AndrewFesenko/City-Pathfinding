@@ -18,6 +18,9 @@ double heuristic(const Node& a, const Node& b) {
 }
 
 vector<int> astar(Graph& graph, int start, int end) { // a* algorithm
+    if (graph.nodes.find(start) == graph.nodes.end()){
+        return {};
+    }
     unordered_map<int, double> gScore, fScore;
     unordered_map<int, int> prev;
     set<int> visited;

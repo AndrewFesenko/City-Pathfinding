@@ -38,3 +38,11 @@ A performance-focused simulation of large-scale city pathfinding using Dijkstra'
 - Edge list of graph data found in data\city_edges.csv
 - Cost of an edge represents distance / time to travel
 - Large-scale testing supported via generated or converted data
+
+---
+
+## 🚀 How To Use
+
+- This program can be run from the command line as shown below.
+- `./city_pathfinding --from [location_ID] --to [location_ID]`
+- Location IDs can be found in the project directory, within the markdown file called *locations.md*

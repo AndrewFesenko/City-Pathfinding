@@ -60,7 +60,7 @@ void runAlgorithms(Graph& g, long long startID, long long endID){
 	auto durationAStar = chrono::duration_cast<chrono::microseconds>(endAStar - startAStar).count();
 	cout << "------------------Dijkstra's Algorithm------------------" << endl;
 	string meters = to_string(getPathCost(g,dijkstraPath));
-	double miles = stoi(meters) / 1609;
+	double miles = stod(meters) / 1609;
 	if (!dijkstraPath.empty()) {
 		cout << "  Total Cost: " << fixed << setprecision(2) << miles << " miles\n";
 	} else {
@@ -70,7 +70,7 @@ void runAlgorithms(Graph& g, long long startID, long long endID){
 
 	cout << "------------------A* Algorithm------------------" << endl;
 	meters = to_string(getPathCost(g,astarPath));
-	miles = stoi(meters) / 1609;
+	miles = stod(meters) / 1609;
 	if (!astarPath.empty()) {
 		cout << "  Total Cost: " << fixed << setprecision(2) << miles << " miles\n";
 	} else {

@@ -2,6 +2,7 @@
 #include "../algorithms/dijkstra.h"
 #include "../algorithms/astar.h"
 #include <iostream>
+#include <iomanip>
 #include <chrono>
 #include <fstream>
 #include <sstream>
@@ -26,7 +27,7 @@ void printPath(const string& name, const vector<long long>& path) {
 		} else {
 			cout << node;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(25));
+		std::this_thread::sleep_for(std::chrono::milliseconds(15));
 	}
 	cout << "\n\n";
 }
@@ -58,16 +59,20 @@ void runAlgorithms(Graph& g, long long startID, long long endID){
 	auto endAStar = chrono::high_resolution_clock::now();
 	auto durationAStar = chrono::duration_cast<chrono::microseconds>(endAStar - startAStar).count();
 	cout << "------------------Dijkstra's Algorithm------------------" << endl;
+	string meters = to_string(getPathCost(g,dijkstraPath));
+	double miles = stoi(meters) / 1609;
 	if (!dijkstraPath.empty()) {
-		cout << "  Total Cost: " << getPathCost(g, dijkstraPath) << endl;
+		cout << "  Total Cost: " << fixed << setprecision(2) << miles << " miles\n";
 	} else {
 		cout << "  No path found." << endl;
 	}
 	cout << "  Time Taken: " << durationDijkstra << " us\n" << endl;
 
 	cout << "------------------A* Algorithm------------------" << endl;
+	meters = to_string(getPathCost(g,astarPath));
+	miles = stoi(meters) / 1609;
 	if (!astarPath.empty()) {
-		cout << "  Total Cost: " << getPathCost(g, astarPath) << endl;
+		cout << "  Total Cost: " << fixed << setprecision(2) << miles << " miles\n";
 	} else {
 		cout << "  No path found. \n";
 	}
@@ -83,6 +88,7 @@ void runAlgorithms(Graph& g, long long startID, long long endID){
 	}	
 }
 
+// load locations into a hash map
 std::unordered_map<int,long long> landmarkMap() {
 	std::unordered_map<int,long long> landmarks;
 	string landmarks_path = "../data/landmarks.csv";
@@ -133,7 +139,7 @@ bool isLandmarkID_Valid(const string& input) {
     int num = stoi(input);
     return (num >= 1 && num <= 16);
 }
-// Generated with assistance from Claude Sonnet 4 AI
+// Written with assistance from Claude Sonnet 4 AI
 
 
 int main() {
@@ -202,10 +208,10 @@ int main() {
 	cout << R"(| |         | |      | |      ) (       | (      | (   ) |   | |   | (   ) |  | (         | |   | | \   || |   ) |   | |   | | \   || | \_  )(_))" << endl;
 	cout << R"(| (____/\___) (___   | |      | |       | )      | )   ( |   | |   | )   ( |  | )      ___) (___| )  \  || (__/  )___) (___| )  \  || (___) | _ )" << endl;
 	cout << R"((_______/\_______/   )_(      \_/       |/       |/     \|   )_(   |/     \|  |/       \_______/|/    )_)(______/ \_______/|/    )_)(_______)(_))" << endl << endl;
-	// Generated with the assistance of Claude Sonnet 4 AI
+	// Written with the assistance of Claude Sonnet 4 AI
 
 	cout << "Welcome to our city path-finding simulation!" << endl << endl;
-	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+	std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 	
 
 	std::unordered_map<int,long long> landmarkNodeIDs = landmarkMap();
@@ -264,6 +270,9 @@ int main() {
 	long long endNodeID = landmarkNodeIDs[stoi(endLocID)];
 
 	runAlgorithms(g, startNodeID, endNodeID);
+
+	cout << "Thank you for using City Pathfinding!" << endl;
+	std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
 	return 0;
 }

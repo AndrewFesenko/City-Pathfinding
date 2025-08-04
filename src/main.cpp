@@ -7,14 +7,16 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <thread>
+#include <cctype>
 
 using namespace std;
 
 // helper to print path
-void printPath(const string& name, const vector<int>& path) {
+void printPath(const string& name, const vector<long long>& path) {
 	cout << name << " Path: ";
 	int formatCount = 0;
-	for (int node : path){
+	for (long long node : path){
 		formatCount++;
 		if (formatCount % 8 == 0 && formatCount < path.size()) {
 			cout << "\n";
@@ -24,16 +26,17 @@ void printPath(const string& name, const vector<int>& path) {
 		} else {
 			cout << node;
 		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(25));
 	}
-	cout << "\n";
+	cout << "\n\n";
 }
 
 // prints path cost
-double getPathCost(const Graph& g, const vector<int>& path) {
+double getPathCost(const Graph& g, const vector<long long>& path) {
 	double cost = 0;
 	for (size_t i = 0; i < path.size() - 1; ++i) {
-		int from = path[i];
-		int to = path[i + 1];
+		long long from = path[i];
+		long long to = path[i + 1];
 		for (const auto& edge : g.adj.at(from)) {
 			if (edge.to == to && edge.isOpen) {
 				cost += edge.cost * edge.trafficMultiplier;
@@ -44,27 +47,27 @@ double getPathCost(const Graph& g, const vector<int>& path) {
 	return cost;
 }
 
-void runAlgorithms(Graph& g){
+void runAlgorithms(Graph& g, long long startID, long long endID){
 	auto startDijkstra = chrono::high_resolution_clock::now();
-	auto dijkstraPath = dijkstra(g, 11386675172, 123198914);		// this says g (graph) runs 1 through 4
+	auto dijkstraPath = dijkstra(g, startID, endID);
 	auto endDijkstra = chrono::high_resolution_clock::now();
 	auto durationDijkstra = chrono::duration_cast<chrono::microseconds>(endDijkstra - startDijkstra).count();
 
 	auto startAStar = chrono::high_resolution_clock::now();
-	auto astarPath = astar(g, 1, 4);
+	auto astarPath = astar(g, startID, endID);
 	auto endAStar = chrono::high_resolution_clock::now();
 	auto durationAStar = chrono::duration_cast<chrono::microseconds>(endAStar - startAStar).count();
 	cout << "------------------Dijkstra's Algorithm------------------" << endl;
 	if (!dijkstraPath.empty()) {
-		cout << "  Total Cost: " << getPathCost(g, dijkstraPath) << "\n";
+		cout << "  Total Cost: " << getPathCost(g, dijkstraPath) << endl;
 	} else {
-		cout << "  No path found.\n";
+		cout << "  No path found." << endl;
 	}
 	cout << "  Time Taken: " << durationDijkstra << " us\n" << endl;
 
 	cout << "------------------A* Algorithm------------------" << endl;
 	if (!astarPath.empty()) {
-		cout << "  Total Cost: " << getPathCost(g, astarPath) << "\n";
+		cout << "  Total Cost: " << getPathCost(g, astarPath) << endl;
 	} else {
 		cout << "  No path found. \n";
 	}
@@ -79,6 +82,59 @@ void runAlgorithms(Graph& g){
 		printPath("A*", astarPath);
 	}	
 }
+
+std::unordered_map<int,long long> landmarkMap() {
+	std::unordered_map<int,long long> landmarks;
+	string landmarks_path = "../data/landmarks.csv";
+	ifstream file(landmarks_path);
+	if(!file.is_open()) {
+		cerr << "Error: Could not find and open file " << landmarks_path << endl;
+		return landmarks;
+	}
+
+	string line;
+	int lineNumber = -1;
+
+	while(getline(file,line)) {
+		lineNumber++;
+		if(lineNumber == 0) {
+			continue;
+		}
+		
+
+		stringstream ss(line);
+		string token;
+		int token_number = -1;
+		while(getline(ss,token,',')) {
+			token_number++;
+			if (token_number == 1) landmarks[lineNumber] = stoll(token);
+		}
+	}
+
+	return landmarks;
+}
+
+
+bool isLandmarkID_Valid(const string& input) {
+	
+    // Check if string is empty
+    if (input.empty()) {
+        return false;
+    }
+    
+    // Check if all characters are digits
+    for (char c : input) {
+        if (!isdigit(c)) {
+            return false;
+        }
+    }
+    
+    // Convert to integer and check range
+    int num = stoi(input);
+    return (num >= 1 && num <= 16);
+}
+// Generated with assistance from Claude Sonnet 4 AI
+
 
 int main() {
 	Graph g;
@@ -95,16 +151,16 @@ int main() {
 	string line;
 	int lineNumber = -1;
 
-	cout << "Reading data..." << endl;
+	cout << "Loading data..." << endl;
 
 	while(getline(file,line)) {
 		lineNumber++;
 		if(lineNumber == 0) {
 			continue;
 		}
-		if (lineNumber % 10000 == 0){
-			cout << "Reading edge(road) " << to_string(lineNumber) << "..." << endl;
-		}
+		// if (lineNumber % 10000 == 0){
+		// 	cout << "Reading edge(road) " << to_string(lineNumber) << "..." << endl;
+		// }
 
 		stringstream ss(line);
 		string token;
@@ -131,24 +187,83 @@ int main() {
 		if(!g.nodeFound(from)) g.addNode(from, x1, y1);
 		if(!g.nodeFound(to)) g.addNode(to,x2,y2);
 		
-		g.addEdge(from,to,cost,open,traffic_constant);
+		if(open) g.addEdge(from,to,cost,open,traffic_constant);
 
 	}
-	cout << "Total edges read: " << lineNumber << endl;
-	cout << "Data successfully read! \n" << endl;
+	cout << endl << "Data successfully loaded! \n" << endl;
 
-	cout << "Welcome to our city way simulation! Please select one of the following locations:" << endl;
-	cout << "Please choose one of the following initial locations:" << endl;
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-	cout << "1. TBA" << endl;
-	cout << "2. TBA" << endl;
+	cout << " _______ __________________              _______  _______ _________            _______ _________ _        ______  _________ _        _______  _ " << endl;
+	cout << R"((  ____ \\__   __/\__   __/|\     /|    (  ____ )(  ___  )\__   __/|\     /|  (  ____ \\__   __/( (    /|(  __  \ \__   __/( (    /|(  ____ \( ))" << endl;
+	cout << R"(| (    \/   ) (      ) (   ( \   / )    | (    )|| (   ) |   ) (   | )   ( |  | (    \/   ) (   |  \  ( || (  \  )   ) (   |  \  ( || (    \/| |)" << endl;
+	cout << R"(| |         | |      | |    \ (_) /     | (____)|| (___) |   | |   | (___) |  | (__       | |   |   \ | || |   ) |   | |   |   \ | || |      | |)" << endl;
+	cout << R"(| |         | |      | |     \   /      |  _____)|  ___  |   | |   |  ___  |  |  __)      | |   | (\ \) || |   | |   | |   | (\ \) || | ____ | |)" << endl;
+	cout << R"(| |         | |      | |      ) (       | (      | (   ) |   | |   | (   ) |  | (         | |   | | \   || |   ) |   | |   | | \   || | \_  )(_))" << endl;
+	cout << R"(| (____/\___) (___   | |      | |       | )      | )   ( |   | |   | )   ( |  | )      ___) (___| )  \  || (__/  )___) (___| )  \  || (___) | _ )" << endl;
+	cout << R"((_______/\_______/   )_(      \_/       |/       |/     \|   )_(   |/     \|  |/       \_______/|/    )_)(______/ \_______/|/    )_)(_______)(_))" << endl << endl;
+	// Generated with the assistance of Claude Sonnet 4 AI
 
-	cout << "Please choose one of the following destinations to end:" << endl;
+	cout << "Welcome to our city path-finding simulation!" << endl << endl;
+	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+	
 
-	cout << "1. TBA" << endl;
-	cout << "2. TBA" << endl;
+	std::unordered_map<int,long long> landmarkNodeIDs = landmarkMap();
+	cout << "Please choose one of the following landmarks to path from:" << endl;
+	cout << "1. LAX Airport" << "\t\t\t" << "9. Caltech" << endl;
+	cout << "2. USC" << "\t\t\t\t" << "10. The Grove" << endl;
+	cout << "3. Griffith Observatory" << "\t\t" << "11. Koreatown Los Angeles" << endl;
+	cout << "4. Hollywood Sign" << "\t\t" << "12. Staples Center" << endl;
+	cout << "5. Santa Monica Pier" << "\t\t" << "13. Union Station Los Angeles" << endl;
+	cout << "6. Dodger Stadium" << "\t\t" << "14. Exposition Park" << endl;
+	cout << "7. Beverly Hills City Hall" << "\t" << "15. Echo Park Lake" << endl;
+	cout << "8. The Getty Center" << "\t\t" << "16. Westwood Village" << endl;
 
-	runAlgorithms(g);
+	// cout << "1. LAX Airport" << "\t\t\t" << "9. Caltech" << endl;
+	// cout << "2. USC" << "\t\t\t\t" << "10. The Grove" << endl;
+	// cout << "3. Griffith Observatory" << "\t\t" << "11. Koreatown Los Angeles" << endl;
+	// cout << "4. Hollywood Sign" << "\t\t\t" << "12. Staples Center" << endl;
+	// cout << "5. Santa Monica Pier" << "\t\t" << "13. Union Station Los Angeles" << endl;
+	// cout << "6. Dodger Stadium" << "\t\t\t" << "14. Exposition Park" << endl;
+	// cout << "7. Beverly Hills City Hall" << "\t\t" << "15. Echo Park Lake" << endl;
+	// cout << "8. The Getty Center" << "\t\t\t" << "16. Westwood Village" << endl;
+
+	string startLocID;
+	cin >> startLocID;
+	cout << endl;
+
+	while(!isLandmarkID_Valid(startLocID)) {
+		cout << "Invalid choice. Try again." << endl;
+		cin >> startLocID;
+		cout << endl;
+	}
+
+	cout << "Please choose one of the following landmarks to path to:" << endl;
+
+	cout << "1. LAX Airport" << "\t\t\t" << "9. Caltech" << endl;
+	cout << "2. USC" << "\t\t\t\t" << "10. The Grove" << endl;
+	cout << "3. Griffith Observatory" << "\t\t" << "11. Koreatown Los Angeles" << endl;
+	cout << "4. Hollywood Sign" << "\t\t" << "12. Staples Center" << endl;
+	cout << "5. Santa Monica Pier" << "\t\t" << "13. Union Station Los Angeles" << endl;
+	cout << "6. Dodger Stadium" << "\t\t" << "14. Exposition Park" << endl;
+	cout << "7. Beverly Hills City Hall" << "\t" << "15. Echo Park Lake" << endl;
+	cout << "8. The Getty Center" << "\t\t" << "16. Westwood Village" << endl;
+
+	string endLocID;
+	cin >> endLocID;
+	cout << endl;
+
+	while(!isLandmarkID_Valid(endLocID)) {
+		cout << "Invalid choice. Try again." << endl;
+		cin >> endLocID;
+		cout << endl;
+	}
+
+
+	long long startNodeID = landmarkNodeIDs[stoi(startLocID)];
+	long long endNodeID = landmarkNodeIDs[stoi(endLocID)];
+
+	runAlgorithms(g, startNodeID, endNodeID);
 
 	return 0;
 }

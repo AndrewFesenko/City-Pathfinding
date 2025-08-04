@@ -141,10 +141,7 @@ bool isLandmarkID_Valid(const string& input) {
 }
 // Written with assistance from Claude Sonnet 4 AI
 
-
-int main() {
-	Graph g;
-
+int loadData(Graph& g) {
 	string csv_path = "../data/city_edges_with_traffic.csv";
 
 	ifstream file(csv_path);
@@ -177,7 +174,7 @@ int main() {
 
 		if(values.size() != 9) {
 			cout << "There aren't 9 values in line: " << to_string(lineNumber) << endl;
-			return 1;
+			exit(1);
 		}
 		long long from = stoll(values[0]);
 		long long to = stoll(values[1]);
@@ -197,6 +194,15 @@ int main() {
 
 	}
 	cout << endl << "Data successfully loaded! \n" << endl;
+	return 0;
+}
+
+int main() {
+	Graph g;
+
+	int err = loadData(g);
+	if(err == 1) return 1;
+	
 
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 

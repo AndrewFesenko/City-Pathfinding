@@ -1,6 +1,6 @@
-#include "algorithms/graph.h"
-#include "algorithms/dijkstra.h"
-#include "algorithms/astar.h"
+#include "../algorithms/graph.h"
+#include "../algorithms/dijkstra.h"
+#include "../algorithms/astar.h"
 #include <iostream>
 #include <chrono>
 #include <fstream>
@@ -13,7 +13,18 @@ using namespace std;
 // helper to print path
 void printPath(const string& name, const vector<int>& path) {
 	cout << name << " Path: ";
-	for (int node : path) cout << node << " ";
+	int formatCount = 0;
+	for (int node : path){
+		formatCount++;
+		if (formatCount % 8 == 0 && formatCount < path.size()) {
+			cout << "\n";
+		}
+		if(formatCount < path.size()) {
+			cout << node << " -> ";
+		} else {
+			cout << node;
+		}
+	}
 	cout << "\n";
 }
 
@@ -31,6 +42,42 @@ double getPathCost(const Graph& g, const vector<int>& path) {
 		}
 	}
 	return cost;
+}
+
+void runAlgorithms(Graph& g){
+	auto startDijkstra = chrono::high_resolution_clock::now();
+	auto dijkstraPath = dijkstra(g, 11386675172, 123198914);		// this says g (graph) runs 1 through 4
+	auto endDijkstra = chrono::high_resolution_clock::now();
+	auto durationDijkstra = chrono::duration_cast<chrono::microseconds>(endDijkstra - startDijkstra).count();
+
+	auto startAStar = chrono::high_resolution_clock::now();
+	auto astarPath = astar(g, 1, 4);
+	auto endAStar = chrono::high_resolution_clock::now();
+	auto durationAStar = chrono::duration_cast<chrono::microseconds>(endAStar - startAStar).count();
+	cout << "------------------Dijkstra's Algorithm------------------" << endl;
+	if (!dijkstraPath.empty()) {
+		cout << "  Total Cost: " << getPathCost(g, dijkstraPath) << "\n";
+	} else {
+		cout << "  No path found.\n";
+	}
+	cout << "  Time Taken: " << durationDijkstra << " us\n" << endl;
+
+	cout << "------------------A* Algorithm------------------" << endl;
+	if (!astarPath.empty()) {
+		cout << "  Total Cost: " << getPathCost(g, astarPath) << "\n";
+	} else {
+		cout << "  No path found. \n";
+	}
+	cout << "  Time Taken: " << durationAStar << " us\n" << endl;
+
+	char seePath = 'n';
+	cout << "Would you like to see the paths? (y/n): ";
+	cin >> seePath;
+	if (seePath == 'y' || seePath == 'Y') {
+		printPath("Dijkstra", dijkstraPath);
+		cout << "--------------------------" << endl;
+		printPath("A*", astarPath);
+	}	
 }
 
 int main() {
@@ -55,7 +102,9 @@ int main() {
 		if(lineNumber == 0) {
 			continue;
 		}
-		cout << "Reading edge(road) " << to_string(lineNumber) << "..." << endl;
+		if (lineNumber % 10000 == 0){
+			cout << "Reading edge(road) " << to_string(lineNumber) << "..." << endl;
+		}
 
 		stringstream ss(line);
 		string token;
@@ -79,43 +128,27 @@ int main() {
 		double traffic_constant = stod(values[8]);
 		bool open = !road_closed;
 
-		g.addEdge(from,to,cost,open,traffic_constant);
-
 		if(!g.nodeFound(from)) g.addNode(from, x1, y1);
 		if(!g.nodeFound(to)) g.addNode(to,x2,y2);
 		
-		
+		g.addEdge(from,to,cost,open,traffic_constant);
 
 	}
-	cout << "Data successfully read!" << endl;
+	cout << "Total edges read: " << lineNumber << endl;
+	cout << "Data successfully read! \n" << endl;
 
-	
+	cout << "Welcome to our city way simulation! Please select one of the following locations:" << endl;
+	cout << "Please choose one of the following initial locations:" << endl;
 
-	// auto startDijkstra = chrono::high_resolution_clock::now();
-	// auto dijkstraPath = dijkstra(g, 11386675172, 123198914);		// this says g (graph) runs 1 through 4
-	// auto endDijkstra = chrono::high_resolution_clock::now();
-	// auto durationDijkstra = chrono::duration_cast<chrono::microseconds>(endDijkstra - startDijkstra).count();
+	cout << "1. TBA" << endl;
+	cout << "2. TBA" << endl;
 
-	// auto startAStar = chrono::high_resolution_clock::now();
-	// auto astarPath = astar(g, 1, 4);
-	// auto endAStar = chrono::high_resolution_clock::now();
-	// auto durationAStar = chrono::duration_cast<chrono::microseconds>(endAStar - startAStar).count();
+	cout << "Please choose one of the following destinations to end:" << endl;
 
-	// printPath("Dijkstra", dijkstraPath);
-	// if (!dijkstraPath.empty()) {
-	// 	cout << "  Total Cost: " << getPathCost(g, dijkstraPath) << "\n";
-	// 	cout << "  Time Taken: " << durationDijkstra << " us\n";
-	// } else {
-	// 	cout << "  No path found.\n";
-	// }
+	cout << "1. TBA" << endl;
+	cout << "2. TBA" << endl;
 
-	// printPath("A*", astarPath);
-	// if (!astarPath.empty()) {
-	// 	cout << "  Total Cost: " << getPathCost(g, astarPath) << "\n";
-	// 	cout << "  Time Taken: " << durationAStar << " us\n";
-	// } else {
-	// 	cout << "  No path found.\n";
-	// }
+	runAlgorithms(g);
 
 	return 0;
 }

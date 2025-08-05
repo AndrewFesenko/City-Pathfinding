@@ -142,7 +142,8 @@ bool isLandmarkID_Valid(const string& input) {
 // Written with assistance from Claude Sonnet 4 AI
 
 int loadData(Graph& g) {
-	string csv_path = "../data/city_edges_with_traffic.csv";
+	string csv_path = "data/city_edges_with_traffic.csv";
+	// string csv_path = "../data/city_edges_with_traffic.csv"; // Alternative for testing
 
 	ifstream file(csv_path);
 
@@ -161,6 +162,8 @@ int loadData(Graph& g) {
 		if(lineNumber == 0) {
 			continue;
 		}
+		
+		// Below is for testing purposes and progress
 		// if (lineNumber % 10000 == 0){
 		// 	cout << "Reading edge(road) " << to_string(lineNumber) << "..." << endl;
 		// }
